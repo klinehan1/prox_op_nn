@@ -46,10 +46,12 @@ def generate_raw_data(data_dist="both", min_len=10, max_len=100, num_vec=10000, 
     return X, lengths, alphas, taus
     
 
-def vanilla_scaling(X, lengths, alphas, taus):
+def vanilla_preprocess(X, lengths, alphas, taus, seed):
 
+    np.random.seed(seed)
+    
     num_obs, max_len = X.shape
-    M = np.zeros((num_obs, max_len))
+    M = np.zeros((num_obs, max_len))  # zero padding in M
     yhat = np.zeros(num_obs)
     zero_idx = np.zeros(num_obs, dtype=bool)
     
@@ -68,6 +70,7 @@ def vanilla_scaling(X, lengths, alphas, taus):
         if w_1norm > 1:
             
             M[i,0:len_v] = w
+            np.random.shuffle(M[i,:])  # randomly shuffle vector entries
 
             # transform y (tau) 
             yhat[i] = taus[i]/alpha
